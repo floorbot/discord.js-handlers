@@ -1,0 +1,32 @@
+{
+    "name": "discord.js-handlers",
+    "description": "A small discord.js library to handle discord interactions",
+    "version": "1.0.0",
+    "main": "dist/index.ts",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "prepare": "npm run build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/floorbot/discord.js-handlers.git"
+    },
+    "keywords": [
+        "discord.js",
+        "interactions"
+    ],
+    "author": "Arcadeena",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/floorbot/discord.js-handlers/issues"
+    },
+    "homepage": "https://github.com/floorbot/discord.js-handlers#readme",
+    "devDependencies": {
+        "typescript": "^4.5.4"
+    },
+    "dependencies": {
+        "discord.js": "^13.3.1"
+    }
+}
