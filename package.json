@@ -3,6 +3,7 @@
     "description": "A small discord.js library to handle discord interactions",
     "version": "1.0.0",
     "main": "dist/index.ts",
+    "types": "src/index.ts",
     "type": "module",
     "scripts": {
         "build": "tsc",
