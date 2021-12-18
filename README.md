@@ -11,8 +11,8 @@ $ npm install github:floorbot/discord.js-handlers
 ## Example Handler
 
 ```ts
-import { HandlerClient } from "./HandlerClient.js";
-import { PingCommand } from "./examples/PingCommand.js";
+import { HandlerClient } from "discord.js-handlers";
+import { PingCommand } from "discord.js-handlers";
 
 const client = new HandlerClient({
     intents: [],
