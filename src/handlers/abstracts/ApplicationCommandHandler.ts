@@ -1,4 +1,5 @@
-import { ApplicationCommand, ApplicationCommandData, ChatInputApplicationCommandData, ClientApplication, Constants, Interaction, MessageApplicationCommandData, UserApplicationCommandData } from "discord.js";
+import { ApplicationCommandData, ChatInputApplicationCommandData, Constants, Interaction, MessageApplicationCommandData, UserApplicationCommandData } from "discord.js";
+import { HandlerClient } from "../../HandlerClient.js";
 import { BaseHandler } from "../../BaseHandler.js";
 
 const { ApplicationCommandTypes } = Constants;
@@ -31,18 +32,17 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
     }
 
     /**
-     * Called when a client is logged in to check if the command needs to be posted
-     * @param application The clients application to use
-     * @returns This commands application command
+     * Checks if the command needs to be posted to discord
+     * @param client The client to check
+     * @returns When the setup is complete
      */
-    public async syncCommand(application: ClientApplication): Promise<ApplicationCommand> {
-        const commands = await application.commands.fetch();
+    public override async setup(client: HandlerClient): Promise<void> {
+        if (!client.application) throw new Error(`Client has no application`);
+        const commands = await client.application.commands.fetch();
         for (const command of commands.values()) {
-            if (command.name === this.commandData.name) {
-                return command;
-            }
+            if (command.name === this.commandData.name) { return; }
         }
-        return application.commands.create(this.commandData);
+        await client.application.commands.create(this.commandData);
     }
 
     /**

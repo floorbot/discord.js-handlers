@@ -1,5 +1,6 @@
 import { IAutocomplete } from "./handlers/interfaces/IAutocomplete.js";
 import { Interaction, InteractionType } from "discord.js";
+import { HandlerClient } from "./index.js";
 
 /** The base handler for any interaction with almost no restrictions */
 export abstract class BaseHandler {
@@ -16,13 +17,13 @@ export abstract class BaseHandler {
     }
 
     /**
-     * Called whenever an interaction is received and passes the predicate. This is where all the logic should be to handle the interaction from start to finish.
+     * Called whenever an interaction is received and passes the predicate. This is where all the logic should be to handle the interaction from start to finish
      * @param interaction The interaction to handle
      */
     public abstract run(interaction: Interaction): Promise<void>;
 
     /**
-     * Called to check if this handler should run for a received interaction. Each handlers predicate is called for all received interactions until one passes which will then be run.
+     * Called to check if this handler should run for a received interaction. Each handlers predicate is called for all received interactions until one passes which will then be run
      * @param interaction The interaction to check
      * @returns Whether this handler should run for the interaction
      */
@@ -34,5 +35,41 @@ export abstract class BaseHandler {
      */
     public hasAutocomplete(): this is IAutocomplete {
         return 'autocomplete' in this && 'commandData' in this;
+    }
+
+    /**
+     * Called whenever this handler encounters an error
+     * @param error The error encountered (this can be anything)
+     * @param interaction The interaction that resulted in an error
+     */
+    public async onError(error: any, interaction: Interaction): Promise<void> {
+        BaseHandler.onError(error, interaction);
+    }
+
+    /**
+     * Called just after a client handler is logged in but before listening for events
+     * @param client The client that has just logged in
+     * @returns Once the handler is setup for client
+     */
+    public async setup(client: HandlerClient): Promise<void> {
+        return BaseHandler.setup(client);
+    }
+
+    /**
+     * A static onError method all handlers will call if not otherwise overridden
+     * @param error The error encountered (this can be anything)
+     * @param interaction The interaction that resulted in an error
+     */
+    public static async onError(error: any, interaction: Interaction): Promise<void> {
+        console.error(`${this.constructor.name} has run into an error`, error, interaction);
+    }
+
+    /**
+     * A static setup method all handlers will call if not otherwise overridden
+     * @param client The client that has just logged in
+     * @returns Once the handler is setup for client
+     */
+    public static async setup(_client: HandlerClient): Promise<void> {
+        return;
     }
 }

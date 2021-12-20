@@ -1,5 +1,4 @@
 import { Client, ClientOptions, Constants, Interaction } from "discord.js";
-import { ApplicationCommandHandler } from "./index.js";
 import { BaseHandler } from "./BaseHandler.js";
 
 const { Events } = Constants;
@@ -38,11 +37,7 @@ export class HandlerClient extends Client {
     public override async login(token?: string): Promise<string> {
         const string = await super.login(token);
         if (!this.application) throw new Error('Logged in no application');
-        for (const handler of this.handlers) {
-            if (handler instanceof ApplicationCommandHandler) {
-                await handler.syncCommand(this.application);
-            }
-        }
+        for (const handler of this.handlers) { await handler.setup(this); }
         this.on(Events.INTERACTION_CREATE, this.onInteractionCreate);
         return string;
     }
@@ -57,6 +52,7 @@ export class HandlerClient extends Client {
             if (handler.type !== interaction.type) continue;
             if (!handler.predicate(interaction)) continue;
             return handler.run(interaction).catch(error => {
+                handler.onError(error, interaction);
                 this.emit(Events.ERROR, error);
             });
         }
@@ -67,6 +63,7 @@ export class HandlerClient extends Client {
                 if (!handler.hasAutocomplete()) continue;
                 if (handler.commandData.name !== interaction.commandName) continue;
                 return handler.autocomplete(interaction).catch(error => {
+                    handler.onError(error, interaction);
                     this.emit(Events.ERROR, error);
                 });
             }
