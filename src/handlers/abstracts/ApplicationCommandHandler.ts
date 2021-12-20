@@ -40,7 +40,11 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
         if (!client.application) throw new Error(`Client has no application`);
         const commands = await client.application.commands.fetch();
         for (const command of commands.values()) {
-            if (command.name === this.commandData.name) { return; }
+            if (command.name === this.commandData.name) {
+                if (this.isChatInputApplicationCommandHandler() && command.type === 'CHAT_INPUT') return;
+                if (this.isMessageApplicationCommand() && command.type === 'MESSAGE') return;
+                if (this.isUserApplicationCommand() && command.type === 'USER') return;
+            }
         }
         await client.application.commands.create(this.commandData);
     }
