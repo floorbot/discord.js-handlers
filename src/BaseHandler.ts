@@ -38,15 +38,6 @@ export abstract class BaseHandler {
     }
 
     /**
-     * Called whenever this handler encounters an error
-     * @param error The error encountered (this can be anything)
-     * @param interaction The interaction that resulted in an error
-     */
-    public async onError(error: any, interaction: Interaction): Promise<void> {
-        BaseHandler.onError(error, interaction);
-    }
-
-    /**
      * Called just after a client handler is logged in but before listening for events
      * @param client The client that has just logged in
      * @returns Once the handler is setup for client
@@ -56,12 +47,21 @@ export abstract class BaseHandler {
     }
 
     /**
-     * A static onError method all handlers will call if not otherwise overridden
+     * Called just before a client handler is destroyed
+     * @param client The client that is being destroyed
+     * @returns Once the handler is destroyed for the client
+     */
+    public async destroy(client: HandlerClient): Promise<void> {
+        return BaseHandler.destroy(client);
+    }
+
+    /**
+     * Called whenever this handler encounters an error
      * @param error The error encountered (this can be anything)
      * @param interaction The interaction that resulted in an error
      */
-    public static async onError(error: any, interaction: Interaction): Promise<void> {
-        console.error(`${this.constructor.name} has run into an error`, error, interaction);
+    public async onError(error: any, interaction: Interaction): Promise<void> {
+        BaseHandler.onError(error, interaction);
     }
 
     /**
@@ -71,5 +71,23 @@ export abstract class BaseHandler {
      */
     public static async setup(_client: HandlerClient): Promise<void> {
         return;
+    }
+
+    /**
+     * A static destroy method all handlers will call if not otherwise overridden
+     * @param client The client that is being destroyed
+     * @returns Once the handler is destroyed for the client
+     */
+    public static async destroy(_client: HandlerClient): Promise<void> {
+        return;
+    }
+
+    /**
+     * A static onError method all handlers will call if not otherwise overridden
+     * @param error The error encountered (this can be anything)
+     * @param interaction The interaction that resulted in an error
+     */
+    public static async onError(error: any, interaction: Interaction): Promise<void> {
+        console.error(`${this.constructor.name} has run into an error`, error, interaction);
     }
 }

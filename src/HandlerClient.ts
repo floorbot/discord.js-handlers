@@ -41,6 +41,15 @@ export class HandlerClient extends Client {
     }
 
     /**
+     * Logs the bot out of discord after destroying all associated handlers.
+     */
+    public override destroy(): void {
+        this.handlers.reduce((promise, handler) => {
+            return promise.then(() => handler.destroy(this));
+        }, Promise.resolve()).then(() => super.destroy());
+    }
+
+    /**
      * An internal method to process all received interactions
      * @param interaction The interaction to process
      * @returns A resolvable promise after handling
