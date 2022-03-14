@@ -1,4 +1,4 @@
-import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { ChatInputApplicationCommandData, ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandHandler } from "../index.js";
 
 export class PingCommand extends ApplicationCommandHandler<ChatInputApplicationCommandData> {
@@ -10,7 +10,7 @@ export class PingCommand extends ApplicationCommandHandler<ChatInputApplicationC
         });
     }
 
-    public run(command: CommandInteraction): Promise<void> {
+    public run(command: ChatInputCommandInteraction): Promise<void> {
         return command.reply('pong!');
     }
 }

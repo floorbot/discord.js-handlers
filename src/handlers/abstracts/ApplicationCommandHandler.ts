@@ -1,8 +1,6 @@
-import { ApplicationCommandData, ChatInputApplicationCommandData, Constants, Interaction, MessageApplicationCommandData, UserApplicationCommandData } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandType, ChatInputApplicationCommandData, Interaction, InteractionType, MessageApplicationCommandData, UserApplicationCommandData } from "discord.js";
 import { HandlerClient } from "../../HandlerClient.js";
 import { BaseHandler } from "../../BaseHandler.js";
-
-const { ApplicationCommandTypes } = Constants;
 
 /** An application command handler with filters for specified command data */
 export abstract class ApplicationCommandHandler<T extends ApplicationCommandData> extends BaseHandler {
@@ -15,7 +13,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * @param commandData  The handlers command data
      */
     constructor(commandData: T) {
-        super('APPLICATION_COMMAND');
+        super(InteractionType.ApplicationCommand);
         this.commandData = commandData;
     }
 
@@ -25,9 +23,9 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * @returns Whether this handler is for the interaction
      */
     public predicate(interaction: Interaction): boolean {
-        if (interaction.isCommand() && this.isChatInputApplicationCommandHandler()) return interaction.commandName === this.commandData.name;
-        if (interaction.isContextMenu() && this.isMessageApplicationCommand()) return interaction.commandName === this.commandData.name;
-        if (interaction.isContextMenu() && this.isUserApplicationCommand()) return interaction.commandName === this.commandData.name;
+        if (interaction.isChatInputCommand() && this.isChatInputApplicationCommandHandler()) return interaction.commandName === this.commandData.name;
+        if (interaction.isMessageContextMenuCommand() && this.isMessageApplicationCommand()) return interaction.commandName === this.commandData.name;
+        if (interaction.isUserContextMenuCommand() && this.isUserApplicationCommand()) return interaction.commandName === this.commandData.name;
         return false;
     }
 
@@ -41,9 +39,9 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
         const commands = await client.application.commands.fetch();
         for (const command of commands.values()) {
             if (command.name === this.commandData.name) {
-                if (this.isChatInputApplicationCommandHandler() && command.type === 'CHAT_INPUT') return;
-                if (this.isMessageApplicationCommand() && command.type === 'MESSAGE') return;
-                if (this.isUserApplicationCommand() && command.type === 'USER') return;
+                if (this.isChatInputApplicationCommandHandler() && command.type === ApplicationCommandType.ChatInput) return;
+                if (this.isMessageApplicationCommand() && command.type === ApplicationCommandType.Message) return;
+                if (this.isUserApplicationCommand() && command.type === ApplicationCommandType.User) return;
             }
         }
         await client.application.commands.create(this.commandData);
@@ -54,7 +52,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * @returns If the type guard passes
      */
     public isChatInputApplicationCommandHandler(): this is ApplicationCommandHandler<ChatInputApplicationCommandData> {
-        if (this.commandData.type === ApplicationCommandTypes.CHAT_INPUT) return true;
+        if (this.commandData.type === ApplicationCommandType.ChatInput) return true;
         if (!this.commandData.type) return true;
         return false;
     }
@@ -64,8 +62,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * @returns If the type guard passes
      */
     public isUserApplicationCommand(): this is ApplicationCommandHandler<UserApplicationCommandData> {
-        if (this.commandData.type === ApplicationCommandTypes.USER) return true;
-        if (this.commandData.type === 'USER') return true;
+        if (this.commandData.type === ApplicationCommandType.User) return true;
         return false;
     }
 
@@ -74,8 +71,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * @returns If the type guard passes
      */
     public isMessageApplicationCommand(): this is ApplicationCommandHandler<MessageApplicationCommandData> {
-        if (this.commandData.type === ApplicationCommandTypes.MESSAGE) return true;
-        if (this.commandData.type === 'MESSAGE') return true;
+        if (this.commandData.type === ApplicationCommandType.Message) return true;
         return false;
     }
 }
