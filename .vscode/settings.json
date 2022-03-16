@@ -14,5 +14,7 @@
     "cSpell.words": [
         "Arcadeena",
         "floorbot"
-    ]
+    ],
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single"
 }

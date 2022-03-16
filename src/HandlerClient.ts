@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Events, Interaction } from "discord.js";
+import { Client, ClientOptions, Events, Interaction, InviteGenerationOptions, OAuth2Scopes } from "discord.js";
 import { BaseHandler } from "./BaseHandler.js";
 
 /** Options used to construct a new handler client */
@@ -75,5 +75,15 @@ export class HandlerClient extends Client {
                 });
             }
         }
+    }
+
+    /**
+     * Generates an invite URL for the bot. If no options are provided "bot" and "applications.commands" scopes are used by default
+     * @param options The invite options to use
+     * @returns The generated bot invite URL
+     */
+    public override generateInvite(options?: InviteGenerationOptions): string {
+        if (!options) return super.generateInvite({ scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands] });
+        return super.generateInvite(options);
     }
 }
