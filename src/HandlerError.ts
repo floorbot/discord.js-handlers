@@ -6,13 +6,18 @@ export class HandlerError extends Error {
 
     /** The handler that has encountered an error */
     public readonly handler: BaseHandler;
-    /** The optional context associated with this error */
-    public readonly context?: HandlerContext;
+    /** The context associated with this error */
+    public readonly context: HandlerContext;
+    /** The object associated with this error */
+    public readonly caught: Error | string | any;
 
     /** Creates a handler error with optional context and message */
-    constructor(handler: BaseHandler, context?: HandlerContext, message?: string) {
-        super(message);
+    constructor(handler: BaseHandler, context: HandlerContext, caught: Error | string | any) {
+        if (caught instanceof Error) super(caught.message);
+        else if (typeof caught === 'string') super(caught);
+        else super('An unknown error has occurred');
         this.handler = handler;
         this.context = context;
+        this.caught = caught;
     }
 }

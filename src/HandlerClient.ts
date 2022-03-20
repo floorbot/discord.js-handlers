@@ -1,5 +1,6 @@
 import { Client, ClientOptions, Events, Interaction, InviteGenerationOptions, OAuth2Scopes } from "discord.js";
 import { BaseHandler } from "./BaseHandler.js";
+import { HandlerError } from './HandlerError.js';
 
 /** Options used to construct a new handler client */
 export interface HandlerClientOptions extends ClientOptions {
@@ -59,8 +60,8 @@ export class HandlerClient extends Client {
             if (handler.type !== interaction.type) continue;
             if (!handler.predicate(interaction)) continue;
             return handler.run(interaction).catch(error => {
-                handler.onError(error, interaction);
-                this.emit(Events.Error, error);
+                const handlerError = new HandlerError(handler, interaction, error);
+                this.emit(Events.Error, handlerError);
             });
         }
 
@@ -70,8 +71,8 @@ export class HandlerClient extends Client {
                 if (!handler.hasAutocomplete()) continue;
                 if (handler.commandData.name !== interaction.commandName) continue;
                 return handler.autocomplete(interaction).catch(error => {
-                    handler.onError(error, interaction);
-                    this.emit(Events.Error, error);
+                    const handlerError = new HandlerError(handler, interaction, error);
+                    this.emit(Events.Error, handlerError);
                 });
             }
         }

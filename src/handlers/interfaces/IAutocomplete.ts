@@ -10,5 +10,5 @@ export interface IAutocomplete {
      * Called when an autocomplete interaction is received for specified command data. This is where all the autocomplete functionality should be handled
      * @param autocomplete The interaction to process
      */
-    autocomplete(autocomplete: AutocompleteInteraction): Promise<any>;
+    autocomplete(autocomplete: AutocompleteInteraction): Promise<void>;
 }
