@@ -1,8 +1,8 @@
-import { ChatInputApplicationCommandData, Interaction, InteractionType } from "discord.js";
+import { AutocompleteInteraction, ChatInputApplicationCommandData, Interaction, InteractionType } from "discord.js";
 import { BaseHandler } from "../../BaseHandler.js";
 
 /** An application command autocomplete handler for specified command data */
-export abstract class AutocompleteHandler extends BaseHandler {
+export abstract class AutocompleteHandler extends BaseHandler<AutocompleteInteraction> {
 
     /** The command data representing this handler */
     public readonly commandData: ChatInputApplicationCommandData;
@@ -17,11 +17,11 @@ export abstract class AutocompleteHandler extends BaseHandler {
     }
 
     /**
-     * Checks the autocomplete interaction command matches this handlers command
+     * A type guard to check if the autocomplete interaction command matches this handlers command
      * @param interaction The interaction to check
-     * @returns Whether this handler is for the interaction
+     * @returns If the type guard passes
      */
-    public predicate(interaction: Interaction): boolean {
+    public predicate(interaction: Interaction): interaction is AutocompleteInteraction {
         if (!interaction.isAutocomplete()) return false;
         return interaction.commandName === this.commandData.name;
     }

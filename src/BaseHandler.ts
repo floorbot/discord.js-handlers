@@ -3,7 +3,7 @@ import { Interaction, InteractionType } from "discord.js";
 import { HandlerClient } from "./index.js";
 
 /** The base handler for any interaction with almost no restrictions */
-export abstract class BaseHandler {
+export abstract class BaseHandler<I extends Interaction> {
 
     /** The interaction type this handler should run for */
     public readonly type: InteractionType;
@@ -20,14 +20,14 @@ export abstract class BaseHandler {
      * Called whenever an interaction is received and passes the predicate. This is where all the logic should be to handle the interaction from start to finish
      * @param interaction The interaction to handle
      */
-    public abstract run(interaction: Interaction): Promise<void>;
+    public abstract run(interaction: I): Promise<void>;
 
     /**
-     * Called to check if this handler should run for a received interaction. Each handlers predicate is called for all received interactions until one passes which will then be run
+     * A type guard to check if this handler should run for a received interaction. Each handlers predicate is called for all received interactions until one passes which will then be run
      * @param interaction The interaction to check
-     * @returns Whether this handler should run for the interaction
+     * @returns If the type guard passes
      */
-    public abstract predicate(interaction: Interaction): boolean;
+    public abstract predicate(interaction: Interaction): interaction is I;
 
     /**
      * A type guard to check if this command supports (implements) autocomplete

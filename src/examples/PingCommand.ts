@@ -1,12 +1,13 @@
-import { ChatInputApplicationCommandData, ChatInputCommandInteraction } from "discord.js";
-import { ApplicationCommandHandler } from "../index.js";
+import { ChatInputCommandHandler } from '../handlers/abstracts/commands/ChatInputCommandHandler.js';
+import { ApplicationCommandType, ChatInputCommandInteraction } from "discord.js";
 
-export class PingCommand extends ApplicationCommandHandler<ChatInputApplicationCommandData> {
+export class PingCommand extends ChatInputCommandHandler {
 
     constructor() {
         super({
             name: 'ping',
-            description: 'pong!'
+            description: 'pong!',
+            type: ApplicationCommandType.ChatInput
         });
     }
 

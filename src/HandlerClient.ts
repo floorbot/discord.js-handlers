@@ -5,7 +5,7 @@ import { HandlerError } from './HandlerError.js';
 /** Options used to construct a new handler client */
 export interface HandlerClientOptions extends ClientOptions {
     /** The handlers the client uses */
-    readonly handlers: BaseHandler[];
+    readonly handlers: BaseHandler<any>[];
     /** An array of user ids that *own* this discord bot */
     readonly ownerIDs?: string[];
 }
@@ -14,7 +14,7 @@ export interface HandlerClientOptions extends ClientOptions {
 export class HandlerClient extends Client {
 
     /** The handlers this client uses */
-    public readonly handlers: BaseHandler[];
+    public readonly handlers: BaseHandler<any>[];
     /** The owner IDs of this discord bot */
     public readonly ownerIDs: string[];
 

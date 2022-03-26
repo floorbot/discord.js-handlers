@@ -1,9 +1,9 @@
-import { ApplicationCommandData, ApplicationCommandType, ChatInputApplicationCommandData, Interaction, InteractionType, MessageApplicationCommandData, UserApplicationCommandData } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandType, ChatInputApplicationCommandData, ChatInputCommandInteraction, CommandInteraction, Interaction, InteractionType, MessageApplicationCommandData, MessageContextMenuCommandInteraction, UserApplicationCommandData, UserContextMenuCommandInteraction } from "discord.js";
 import { HandlerClient } from "../../HandlerClient.js";
 import { BaseHandler } from "../../BaseHandler.js";
 
 /** An application command handler with filters for specified command data */
-export abstract class ApplicationCommandHandler<T extends ApplicationCommandData> extends BaseHandler {
+export abstract class ApplicationCommandHandler<I extends CommandInteraction, T extends ApplicationCommandData> extends BaseHandler<I> {
 
     /** The command data representing this handler */
     public readonly commandData: T;
@@ -18,11 +18,11 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
     }
 
     /**
-     * Checks the interaction is a command and the name matches this handler
+     * A type guard to check if the interaction is a command and the name matches this handler
      * @param interaction The interaction to check
-     * @returns Whether this handler is for the interaction
+     * @returns If the type guard passes
      */
-    public predicate(interaction: Interaction): boolean {
+    public predicate(interaction: Interaction): interaction is I {
         if (interaction.isChatInputCommand() && this.isChatInputApplicationCommandHandler()) return interaction.commandName === this.commandData.name;
         if (interaction.isMessageContextMenuCommand() && this.isMessageApplicationCommand()) return interaction.commandName === this.commandData.name;
         if (interaction.isUserContextMenuCommand() && this.isUserApplicationCommand()) return interaction.commandName === this.commandData.name;
@@ -51,7 +51,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * A type guard to check if this handler is for chat input application commands
      * @returns If the type guard passes
      */
-    public isChatInputApplicationCommandHandler(): this is ApplicationCommandHandler<ChatInputApplicationCommandData> {
+    public isChatInputApplicationCommandHandler(): this is ApplicationCommandHandler<ChatInputCommandInteraction, ChatInputApplicationCommandData> {
         if (this.commandData.type === ApplicationCommandType.ChatInput) return true;
         if (!this.commandData.type) return true;
         return false;
@@ -61,7 +61,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * A type guard to check if this handler is for user application commands
      * @returns If the type guard passes
      */
-    public isUserApplicationCommand(): this is ApplicationCommandHandler<UserApplicationCommandData> {
+    public isUserApplicationCommand(): this is ApplicationCommandHandler<UserContextMenuCommandInteraction, UserApplicationCommandData> {
         if (this.commandData.type === ApplicationCommandType.User) return true;
         return false;
     }
@@ -70,7 +70,7 @@ export abstract class ApplicationCommandHandler<T extends ApplicationCommandData
      * A type guard to check if this handler is for message application commands
      * @returns If the type guard passes
      */
-    public isMessageApplicationCommand(): this is ApplicationCommandHandler<MessageApplicationCommandData> {
+    public isMessageApplicationCommand(): this is ApplicationCommandHandler<MessageContextMenuCommandInteraction, MessageApplicationCommandData> {
         if (this.commandData.type === ApplicationCommandType.Message) return true;
         return false;
     }
