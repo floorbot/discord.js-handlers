@@ -1,6 +1,10 @@
-import { Client, ClientOptions, Events, Interaction, InviteGenerationOptions, OAuth2Scopes } from "discord.js";
-import { BaseHandler } from "./BaseHandler.js";
+import { Client, ClientOptions, Constants, Interaction, InviteGenerationOptions } from "discord.js";
+import { OAuth2Scopes } from 'discord-api-types/payloads/v10';
 import { HandlerError } from './HandlerError.js';
+import { BaseHandler } from "./BaseHandler.js";
+
+
+const { Events } = Constants;
 
 /** Options used to construct a new handler client */
 export interface HandlerClientOptions extends ClientOptions {
@@ -37,7 +41,7 @@ export class HandlerClient extends Client {
         const string = await super.login(token);
         if (!this.application) throw new Error('Logged in no application');
         for (const handler of this.handlers) { await handler.setup(this); }
-        this.on(Events.InteractionCreate, this.onInteractionCreate);
+        this.on(Events.INTERACTION_CREATE, this.onInteractionCreate);
         return string;
     }
 
@@ -61,7 +65,7 @@ export class HandlerClient extends Client {
             if (!handler.predicate(interaction)) continue;
             return handler.run(interaction).catch(error => {
                 const handlerError = new HandlerError(handler, interaction, error);
-                this.emit(Events.Error, handlerError);
+                this.emit(Events.ERROR, handlerError);
             });
         }
 
@@ -72,7 +76,7 @@ export class HandlerClient extends Client {
                 if (handler.commandData.name !== interaction.commandName) continue;
                 return handler.autocomplete(interaction).catch(error => {
                     const handlerError = new HandlerError(handler, interaction, error);
-                    this.emit(Events.Error, handlerError);
+                    this.emit(Events.ERROR, handlerError);
                 });
             }
         }
