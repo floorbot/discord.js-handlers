@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, ChatInputApplicationCommandData, Interaction } from "discord.js";
+import { AutocompleteInteraction, ChatInputApplicationCommandData, Interaction, InteractionType } from "discord.js";
 import { BaseHandler } from "../../BaseHandler.js";
 
 /** An application command autocomplete handler for specified command data */
@@ -12,7 +12,7 @@ export abstract class AutocompleteHandler extends BaseHandler<AutocompleteIntera
      * @param commandData  The handlers command data
      */
     constructor(commandData: ChatInputApplicationCommandData) {
-        super('APPLICATION_COMMAND_AUTOCOMPLETE');
+        super(InteractionType.ApplicationCommandAutocomplete);
         this.commandData = commandData;
     }
 

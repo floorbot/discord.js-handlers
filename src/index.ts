@@ -1,6 +1,6 @@
-import { Interaction, Message } from "discord.js";
+import { BaseInteraction, Message } from "discord.js";
 
-export type HandlerContext = Interaction | Message;
+export type HandlerContext = BaseInteraction | Message;
 
 export * from './BaseHandler.js';
 export * from './HandlerError.js';

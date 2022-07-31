@@ -1,6 +1,5 @@
 import { ChatInputCommandHandler } from '../handlers/abstracts/commands/ChatInputCommandHandler.js';
-import { ApplicationCommandTypes } from 'discord.js/typings/enums.js';
-import { CommandInteraction } from 'discord.js';
+import { ApplicationCommandType, CommandInteraction } from 'discord.js';
 
 export class PingCommand extends ChatInputCommandHandler {
 
@@ -8,11 +7,11 @@ export class PingCommand extends ChatInputCommandHandler {
         super({
             name: 'ping',
             description: 'pong!',
-            type: ApplicationCommandTypes.CHAT_INPUT
+            type: ApplicationCommandType.ChatInput
         });
     }
 
-    public run(command: CommandInteraction): Promise<void> {
+    public run(command: CommandInteraction): Promise<any> {
         return command.reply('pong!');
     }
 }
