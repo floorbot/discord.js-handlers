@@ -1,9 +1,9 @@
-import { ApplicationCommandData, ApplicationCommandType, ChatInputApplicationCommandData, CommandInteraction, InteractionType, MessageApplicationCommandData, MessageContextMenuCommandInteraction, UserApplicationCommandData, UserContextMenuCommandInteraction } from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandType, BaseInteraction, ChatInputApplicationCommandData, ChatInputCommandInteraction, CommandInteraction, ContextMenuCommandBuilder, InteractionType, MessageApplicationCommandData, MessageContextMenuCommandInteraction, SlashCommandBuilder, UserApplicationCommandData, UserContextMenuCommandInteraction } from 'discord.js';
 import { HandlerClient } from "../../HandlerClient.js";
 import { BaseHandler } from "../../BaseHandler.js";
 
 /** An application command handler with filters for specified command data */
-export abstract class ApplicationCommandHandler<I extends CommandInteraction, T extends ApplicationCommandData> extends BaseHandler<I> {
+export abstract class ApplicationCommandHandler<I extends CommandInteraction, T extends ApplicationCommandData | SlashCommandBuilder | ContextMenuCommandBuilder> extends BaseHandler<I> {
 
     /** The command data representing this handler */
     public readonly commandData: T;
@@ -22,7 +22,7 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * @param interaction The interaction to check
      * @returns If the type guard passes
      */
-    public predicate(interaction: CommandInteraction): interaction is I {
+    public predicate(interaction: BaseInteraction): interaction is I {
         if (interaction.isCommand() && this.isChatInputCommandHandler()) return interaction.commandName === this.commandData.name;
         if (interaction.isUserContextMenuCommand() && this.isUserContextMenuHandler()) return interaction.commandName === this.commandData.name;
         if (interaction.isMessageContextMenuCommand() && this.isMessageContextMenuHandler()) return interaction.commandName === this.commandData.name;
@@ -32,7 +32,7 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
     /**
      * Checks if the command needs to be posted to discord
      * @param client The client to check
-     * @returns When the setup is complete
+     * @returns A resolvable promise when setup is complete
      */
     public override async setup(client: HandlerClient): Promise<void> {
         if (!client.application) throw new Error(`Client has no application`);
@@ -51,7 +51,8 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * A type guard to check if this handler is for chat input application commands
      * @returns If the type guard passes
      */
-    public isChatInputCommandHandler(): this is ApplicationCommandHandler<CommandInteraction, ChatInputApplicationCommandData> {
+    public isChatInputCommandHandler(): this is ApplicationCommandHandler<ChatInputCommandInteraction, ChatInputApplicationCommandData> {
+        if (this.commandData instanceof SlashCommandBuilder) return true;
         if (this.commandData.type === ApplicationCommandType.ChatInput) return true;
         if (!this.commandData.type) return true;
         return false;
@@ -62,6 +63,7 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * @returns If the type guard passes
      */
     public isMessageContextMenuHandler(): this is ApplicationCommandHandler<MessageContextMenuCommandInteraction, MessageApplicationCommandData> {
+        if (this.commandData instanceof SlashCommandBuilder) return false;
         if (this.commandData.type === ApplicationCommandType.Message) return true;
         return false;
     }
@@ -71,6 +73,7 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * @returns If the type guard passes
      */
     public isUserContextMenuHandler(): this is ApplicationCommandHandler<UserContextMenuCommandInteraction, UserApplicationCommandData> {
+        if (this.commandData instanceof SlashCommandBuilder) return false;
         if (this.commandData.type === ApplicationCommandType.User) return true;
         return false;
     }
