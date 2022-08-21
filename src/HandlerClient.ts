@@ -1,5 +1,4 @@
-import { Client, ClientOptions, Events, Interaction, InviteGenerationOptions } from "discord.js";
-import { OAuth2Scopes } from 'discord-api-types/payloads/v10';
+import { Client, ClientOptions, Events, Interaction, InviteGenerationOptions, OAuth2Scopes } from "discord.js";
 import { HandlerError } from './HandlerError.js';
 import { BaseHandler } from "./BaseHandler.js";
 
@@ -30,7 +29,7 @@ export class HandlerClient extends Client {
     }
 
     /**
-     * Logs the bot into discord and sets up all the handlers
+     * Logs the bot in to discord and sets up all the handlers
      * @param token The discord token login with
      * @returns The token used
      */
@@ -45,10 +44,9 @@ export class HandlerClient extends Client {
     /**
      * Logs the bot out of discord after destroying all associated handlers.
      */
-    public override destroy(): void {
-        this.handlers.reduce((promise, handler) => {
-            return promise.then(() => handler.destroy(this));
-        }, Promise.resolve()).then(() => super.destroy());
+    public override async destroy(): Promise<void> {
+        for (const handler of this.handlers) await handler.destroy(this);
+        return super.destroy();
     }
 
     /**
