@@ -5,7 +5,8 @@ export abstract class UserContextMenuCommandHandler extends ApplicationCommandHa
 
     /**
      * Called whenever a context menu interaction is received and passes the predicate. This is where all the logic should be to handle the context menu from start to finish
-     * @param contextMenu The context menu interaction to handle
+     * @param {UserContextMenuCommandInteraction} contextMenu The context menu interaction to handle
+     * @returns {Promise<any>} A resolvable promise when the handler is complete
      */
     public abstract override run(contextMenu: UserContextMenuCommandInteraction): Promise<any>;
 }

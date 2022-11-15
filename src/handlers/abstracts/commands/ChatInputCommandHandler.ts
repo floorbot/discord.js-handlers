@@ -5,7 +5,8 @@ export abstract class ChatInputCommandHandler extends ApplicationCommandHandler<
 
     /**
      * Called whenever a command interaction is received and passes the predicate. This is where all the logic should be to handle the command from start to finish
-     * @param command The command interaction to handle
+     * @param {ChatInputCommandInteraction} command The command interaction to handle
+     * @returns {Promise<any>} A resolvable promise when the handler is complete
      */
     public abstract override run(command: ChatInputCommandInteraction): Promise<any>;
 }
