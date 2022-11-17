@@ -42,19 +42,22 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * Checks if the command needs to be posted to discord
      * @param {Object} options The context for setting up this handler
      * @param {HandlerClient} options.client The client to check
-     * @returns {Promise<void>} A resolvable promise when setup is complete
+     * @param {boolean} options.forcePost If the command data should be force post to discord
+     * @returns {Promise<any>} A resolvable promise when setup is complete
      */
-    public override async setup({ client }: { client: HandlerClient; }): Promise<void> {
+    public override async setup({ client, forcePost = false }: { client: HandlerClient, forcePost?: boolean; }): Promise<any> {
         if (!client.application) throw new Error(`Client has no application`);
-        const commands = await client.application.commands.fetch();
-        for (const command of commands.values()) {
-            if (command.name === this.commandData.name) {
-                if (this.isChatInputCommandHandler() && command.type === ApplicationCommandType.ChatInput) return;
-                if (this.isMessageContextMenuHandler() && command.type === ApplicationCommandType.Message) return;
-                if (this.isUserContextMenuHandler() && command.type === ApplicationCommandType.User) return;
+        if (!forcePost) {
+            const commands = await client.application.commands.fetch();
+            for (const command of commands.values()) {
+                if (command.name === this.commandData.name) {
+                    if (this.isChatInputCommandHandler() && command.type === ApplicationCommandType.ChatInput) return;
+                    if (this.isMessageContextMenuHandler() && command.type === ApplicationCommandType.Message) return;
+                    if (this.isUserContextMenuHandler() && command.type === ApplicationCommandType.User) return;
+                }
             }
         }
-        await client.application.commands.create(this.commandData);
+        return await client.application.commands.create(this.commandData);
     }
 
     /**
