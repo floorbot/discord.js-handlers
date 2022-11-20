@@ -32,7 +32,7 @@ export abstract class ApplicationCommandHandler<I extends CommandInteraction, T 
      * @returns {boolean} If the type guard passes
      */
     public predicate(interaction: BaseInteraction): interaction is I {
-        if (interaction.isCommand() && this.isChatInputCommandHandler()) return interaction.commandName === this.commandData.name;
+        if (interaction.isChatInputCommand() && this.isChatInputCommandHandler()) return interaction.commandName === this.commandData.name;
         if (interaction.isUserContextMenuCommand() && this.isUserContextMenuHandler()) return interaction.commandName === this.commandData.name;
         if (interaction.isMessageContextMenuCommand() && this.isMessageContextMenuHandler()) return interaction.commandName === this.commandData.name;
         return false;
