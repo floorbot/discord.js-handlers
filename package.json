@@ -25,7 +25,7 @@
     },
     "homepage": "https://github.com/floorbot/discord.js-handlers#readme",
     "devDependencies": {
-        "typescript": "^4.5.4"
+        "typescript": "^5.1.6"
     },
     "dependencies": {
         "discord.js": "^14.12.1"
