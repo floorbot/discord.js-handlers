@@ -12,7 +12,7 @@ export interface HandlerClientOptions extends ClientOptions {
 }
 
 /** A discord.js client with interaction handler functionality */
-export class HandlerClient extends Client {
+export class HandlerClient<Ready extends boolean = boolean> extends Client<Ready> {
 
     /** The handlers this client uses */
     public readonly handlers: BaseHandler<any>[];
